@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AI Chatbot (Demo)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <main class="app" role="application">
+        <aside class="sidebar" aria-label="Sidebar">
+            <div class="brand">AI Chatbot Demo</div>
+            <div class="conversations" id="conversationsList"></div>
+
+            <button id="newConvBtn" class="new-btn">+ New Conversation</button>
+
+            <div class="meta">
+                This demo uses a backend proxy — do not put API keys in client-side code.
+            </div>
+        </aside>
+
+        <section class="chat-area" aria-live="polite">
+            <header class="chat-header">
+                <h2 id="chatTitle">New Chat</h2>
+            </header>
+
+            <div class="messages" id="messages" role="log" aria-atomic="false"></div>
+
+            <form id="inputForm" class="input-area" onsubmit="return false;">
+                <textarea id="promptInput" placeholder="Ask anything..." aria-label="Message input"></textarea>
+                <button id="sendBtn" class="send-btn" type="button">Send</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
