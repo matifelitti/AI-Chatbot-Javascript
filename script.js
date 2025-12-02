@@ -1,116 +1,49 @@
-const messagesEl = document.getElementById("messages");
-const input = document.getElementById("promptInput");
 const sendBtn = document.getElementById("sendBtn");
-const convList = document.getElementById("conversationsList");
-const newBtn = document.getElementById("newConvBtn");
-const chatTitle = document.getElementById("chatTitle");
+const input = document.getElementById("promptInput");
+const messages = document.getElementById("messages");
 
-let conversationId = null;
-let loading = false;
-
-function addMessage(text, who = "bot") {
-  const div = document.createElement("div");
-  div.className = "msg " + (who === "user" ? "user" : "bot");
-  div.textContent = text;
-  messagesEl.appendChild(div);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function setTyping(on) {
-  const existing = document.getElementById("typingIndicator");
-  if (on) {
-    if (!existing) {
-      const t = document.createElement("div");
-      t.id = "typingIndicator";
-      t.className = "msg bot";
-      t.textContent = "AI is typing...";
-      messagesEl.appendChild(t);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-  } else {
-    if (existing) existing.remove();
-  }
-}
+const OPENAI_API_KEY = "YOUR_API_KEY_HERE";
 
 async function sendMessage() {
-  const text = input.value.trim();
-  if (!text || loading) return;
-  loading = true;
+  const userText = input.value.trim();
+  if (userText === "") return;
 
-  addMessage(text, "user");
+  addMessage(userText, "user");
   input.value = "";
 
-  setTyping(true);
+  addMessage("Thinking...", "bot-temp");
 
-  try {
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text, conversationId }),
-    });
-
-    if (!res.ok) throw new Error(await res.text());
-
-    const data = await res.json();
-
-    setTyping(false);
-    addMessage(data.reply || "[no reply]", "bot");
-
-    conversationId = data.conversationId || conversationId;
-
-    saveConversationPreview(text, data.reply || "");
-  } catch (err) {
-    setTyping(false);
-    addMessage("Error: " + err.message, "bot");
-  } finally {
-    loading = false;
-  }
-}
-
-function saveConversationPreview(userMsg, botReply) {
-  let convs = JSON.parse(localStorage.getItem("convs") || "[]");
-  const id = conversationId || "local-" + Date.now();
-
-  const idx = convs.findIndex((c) => c.id === id);
-  if (idx >= 0) {
-    convs[idx].preview = botReply;
-  } else {
-    convs.unshift({
-      id,
-      title: userMsg.slice(0, 30) || "New chat",
-      preview: botReply.slice(0, 60),
-    });
-  }
-
-  localStorage.setItem("convs", JSON.stringify(convs));
-  renderConversations();
-}
-
-function renderConversations() {
-  convList.innerHTML = "";
-  const convs = JSON.parse(localStorage.getItem("convs") || "[]");
-
-  convs.forEach((c) => {
-    const el = document.createElement("div");
-    el.className = "conv";
-    el.textContent = c.title + "\n" + (c.preview || "");
-    el.onclick = () => startConversation(c.id, c.title);
-    convList.appendChild(el);
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: userText }],
+    }),
   });
+
+  const data = await response.json();
+  const reply = data.choices?.[0]?.message?.content || "No reply";
+
+  removeTempMessage();
+  addMessage(reply, "bot");
 }
 
-function startConversation(id, title) {
-  conversationId = id;
-  chatTitle.textContent = title || "Chat";
-  messagesEl.innerHTML = "";
-  addMessage("Conversation restored (only preview stored locally).", "bot");
+function addMessage(text, who) {
+  const div = document.createElement("div");
+  div.className = "msg " + who;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
 }
 
-newBtn.addEventListener("click", () => {
-  conversationId = null;
-  chatTitle.textContent = "New Chat";
-  messagesEl.innerHTML = "";
-});
+function removeTempMessage() {
+  const temp = document.querySelector(".bot-temp");
+  if (temp) temp.remove();
+}
 
 sendBtn.addEventListener("click", sendMessage);
 
@@ -120,5 +53,3 @@ input.addEventListener("keydown", (e) => {
     sendMessage();
   }
 });
-
-renderConversations();
