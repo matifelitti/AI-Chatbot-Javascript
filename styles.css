@@ -1,71 +1,100 @@
+/* ====== GLOBAL ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
 body {
-  margin: 0;
-  background: #0f172a;
-  color: white;
-  font-family: Arial, sans-serif;
+  background: #e8ebf0;
+  color: #1e293b;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  align-items: center;
+  padding: 2.5rem;
 }
 
+/* ====== TITLE ====== */
 h2 {
-  text-align: center;
-  padding: 1rem;
-  margin: 0;
-  background: #1e293b;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.7rem;
+  color: #0f172a;
 }
 
+/* ====== MESSAGES CONTAINER ====== */
 .messages {
-  flex: 1;
+  width: 100%;
+  max-width: 520px;
+  height: 380px;
   overflow-y: auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+  background: #ffffff;
+  border: 1px solid #d9dce1;
+  border-radius: 0.7rem;
+  padding: 1.2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1.3rem;
 }
 
-.msg {
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
-  max-width: 80%;
-  line-height: 1.35;
+/* Mensajes generales */
+.messages p {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
-.user {
-  align-self: flex-end;
-  background: #3b82f6;
+/* User message */
+.messages .user {
+  text-align: right;
+  color: #3b82f6;
+  font-weight: 600;
 }
 
-.bot,
-.bot-temp {
-  align-self: flex-start;
-  background: #334155;
+/* Bot message */
+.messages .bot {
+  text-align: left;
+  color: #0d9488;
+  font-weight: 600;
 }
 
+/* ====== INPUT AREA ====== */
 .input-area {
+  width: 100%;
+  max-width: 520px;
   display: flex;
-  gap: 0.5rem;
-  padding: 0.8rem;
-  background: #1e293b;
+  gap: 0.65rem;
 }
 
-textarea {
+#promptInput {
   flex: 1;
+  padding: 0.85rem;
+  border: 1px solid #c4c7cc;
+  border-radius: 0.55rem;
   resize: none;
-  padding: 0.6rem;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background: #0f172a;
-  color: white;
+  font-size: 0.95rem;
+  background: #ffffff;
+  color: #1e293b;
 }
 
-button {
-  padding: 0 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+#promptInput:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+/* ====== SEND BUTTON ====== */
+#sendBtn {
+  padding: 0.85rem 1.25rem;
   background: #3b82f6;
-  color: white;
-  font-weight: bold;
+  border: none;
+  border-radius: 0.55rem;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  font-size: 0.95rem;
+}
+
+#sendBtn:hover {
+  background: #2563eb;
 }
